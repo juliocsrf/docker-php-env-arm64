@@ -1,0 +1,5 @@
+/config/nginx/site.conf
+/mysql-data/
+/www/
+docker-compose.yml
+/config/php/custom.ini

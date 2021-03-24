@@ -1,0 +1,32 @@
+server {
+	listen 80 default_server;
+	return 404;
+}
+
+server {
+	listen 80;
+	listen [::]:80;
+
+	server_name app.localhost;
+	root /usr/www/app;
+	index index.html index.htm index.php;
+	client_max_body_size 200m;
+	fastcgi_read_timeout 2500;
+	charset utf-8;
+	location / {
+		try_files $uri $uri/ /index.php?$query_string;
+	}
+	location ~ \.php$ {
+		include fastcgi_params;
+		try_files $fastcgi_script_name = 404;
+		fastcgi_pass php:9000;
+		fastcgi_index index.php;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	}
+	location ~ /\.ht {
+		deny all;
+	}
+	location ~ /.well-known {
+		allow all;
+	}
+}

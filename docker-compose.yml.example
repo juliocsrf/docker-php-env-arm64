@@ -1,0 +1,37 @@
+version: "3.2"
+services:
+    db:
+        container_name: mariadb
+        restart: unless-stopped
+        image: mariadb:10.5
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        ports:
+            - 3306:3306
+        volumes:
+            - ./mysql-data:/var/lib/mysql
+        networks:
+            - nginx-network
+    nginx:
+        container_name: nginx
+        restart: unless-stopped
+        image: nginx:1.17.8
+        ports:
+            - 80:80
+        volumes:
+            - ./config/nginx/site.conf:/etc/nginx/conf.d/site.conf
+            - ./www:/usr/www
+        networks:
+            - nginx-network
+    php:
+        container_name: php
+        restart: unless-stopped
+        image: juliocsrmf/php-7-4-arm64
+        volumes:
+            - ./www:/usr/www
+            - ./config/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+        networks:
+            - nginx-network
+networks:
+    nginx-network:
+        driver: bridge
